@@ -340,13 +340,13 @@ function dnsHardening(content) {
     - '*.local'
     - 'localhost'
   nameserver:
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
+    - https://120.53.53.53/dns-query
+    - https://223.5.5.5/dns-query
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
   proxy-server-nameserver:
-    - https://doh.pub/dns-query
+    - https://120.53.53.53/dns-query
   direct-nameserver:
     - 223.5.5.5
 `;
