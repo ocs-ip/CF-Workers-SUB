@@ -1,4 +1,6 @@
 
+
+
 // 部署完成后在网址后面加上这个，获取自建节点和机场聚合节点，/?token=auto或/auto或
 
 let mytoken = 'auto';
@@ -15,8 +17,8 @@ let timestamp = 4102329600000;//2099-12-31
 let MainData = `
 https://cfxr.eu.org/getSub
 `;
-
-let urls = [];
+let urls = [];if (订阅格式 == 'clash') subConverterContent = await clashFix(subConverterContent);
+if (订阅格式 == 'clash') subConverterContent = dnsHardening(subConverterContent);
 let subConverter = "SUBAPI.cmliussss.net"; //在线订阅转换后端，目前使用CM的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
 let subConfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_MultiCountry.ini"; //订阅配置文件
 let subProtocol = 'https';
@@ -324,7 +326,51 @@ function clashFix(content) {
 		content = result;
 	}
 	return content;
+
+function dnsHardening(content) {
+	// S1 DNS 防泄漏硬化: 强制 DoH-only 上游 + fake-ip 模式, 消灭明文 DNS
+	// 2026-10-08: 修复 ipleak 检出的电信/联通 DNS 旁路泄漏
+	const hardenedDns = `dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - '*.lan'
+    - '*.local'
+    - 'localhost'
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  proxy-server-nameserver:
+    - https://doh.pub/dns-query
+  direct-nameserver:
+    - 223.5.5.5
+`;
+	// 替换整个 dns: 块 (从 dns: 行开始到下一个顶级 key 或文件结尾)
+	const dnsBlockRegex = /^dns:\n(?:[ \t]+.*\n?)*/m;
+	if (dnsBlockRegex.test(content)) {
+		content = content.replace(dnsBlockRegex, hardenedDns);
+	} else {
+		// 没有 dns 块则在开头插入
+		content = hardenedDns + content;
+	}
+	// TUN DNS 劫持: 确保 tun.dns-hijack 包含 TCP+UDP 53
+	const tunHijackRegex = /^([ \t]*)dns-hijack:\n(?:[ \t]+.*\n?)*/m;
+	const hardenedHijack = `  dns-hijack:
+    - any:53
+    - tcp://any:53
+`;
+	if (tunHijackRegex.test(content)) {
+		content = content.replace(tunHijackRegex, hardenedHijack);
+	}
+	return content;
 }
+
+
 
 async function proxyURL(proxyURL, url) {
 	const URLs = await ADD(proxyURL);
