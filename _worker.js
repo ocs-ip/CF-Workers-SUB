@@ -17,8 +17,7 @@ let timestamp = 4102329600000;//2099-12-31
 let MainData = `
 https://cfxr.eu.org/getSub
 `;
-let urls = [];if (订阅格式 == 'clash') subConverterContent = await clashFix(subConverterContent);
-if (订阅格式 == 'clash') subConverterContent = dnsHardening(subConverterContent);
+let urls = [];
 let subConverter = "SUBAPI.cmliussss.net"; //在线订阅转换后端，目前使用CM的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
 let subConfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_MultiCountry.ini"; //订阅配置文件
 let subProtocol = 'https';
