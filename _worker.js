@@ -354,7 +354,7 @@ function dnsHardening(content) {
     - https://223.5.5.5/dns-query
 `;
 	// 替换整个 dns: 块 (从 dns: 行开始到下一个顶级 key 或文件结尾)
-	const dnsBlockRegex = /^dns:\n(?:[ \t]+.*\n?)*/m;
+	const dnsBlockRegex = /^dns:\r?\n(?:[ \t]+.*\r?\n?)*/m;
 	if (dnsBlockRegex.test(content)) {
 		content = content.replace(dnsBlockRegex, hardenedDns);
 	} else {
@@ -362,7 +362,7 @@ function dnsHardening(content) {
 		content = hardenedDns + content;
 	}
 	// TUN DNS 劫持: 确保 tun.dns-hijack 包含 TCP+UDP 53
-	const tunHijackRegex = /^([ \t]*)dns-hijack:\n(?:[ \t]+.*\n?)*/m;
+	const tunHijackRegex = /^([ \t]*)dns-hijack:\r?\n(?:[ \t]+.*\r?\n?)*/m;
 	const hardenedHijack = `  dns-hijack:
     - any:53
     - tcp://any:53
