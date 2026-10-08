@@ -348,7 +348,7 @@ function dnsHardening(content) {
   proxy-server-nameserver:
     - https://120.53.53.53/dns-query
   direct-nameserver:
-    - 223.5.5.5
+    - https://223.5.5.5/dns-query
 `;
 	// 替换整个 dns: 块 (从 dns: 行开始到下一个顶级 key 或文件结尾)
 	const dnsBlockRegex = /^dns:\n(?:[ \t]+.*\n?)*/m;
